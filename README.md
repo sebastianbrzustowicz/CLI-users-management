@@ -1,5 +1,6 @@
 # Description
 ### CLI users management
+The script uses only the Python standard library.
 This script is helpful with managing data with different types of files. (.json, .csv, .xml, .db)
 The structure of the processed data is as follows:
 - `firstname`

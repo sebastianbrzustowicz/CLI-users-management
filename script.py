@@ -15,7 +15,6 @@ class UserDataProcessor:
 
     def import_data(self, files):
         # Load data from JSON, CSV, XML
-        #print("load data")
         for file in files:
             if file.endswith(".json"):
                 self._load_json(file)
@@ -26,10 +25,39 @@ class UserDataProcessor:
             elif file.endswith(".xml"):
                 self._load_xml(file)
                 pass
+            elif file.endswith(".db"):
+                self._load_db(file)
+                pass
+
+
+    def _load_db(self, file):
+        # load data from db
+        conn = sqlite3.connect(file)
+        cursor = conn.cursor()
+        res = cursor.execute("""SELECT firstname, telephone_number, email, 
+                             password, role, created_at FROM users""")
+        data = res.fetchall()
+        users = []
+        for row in data:
+            row = list(row)
+            row.append([])
+            users.append(row)
+
+        res = cursor.execute("""SELECT parent_email, name, age FROM children""")
+        data = res.fetchall()
+
+        for row in data:
+            row = list(row)
+            for user in users:
+                if user[2] == row[0]:
+                    user[6].append([row[1], row[2]])
+
+        conn.close()
+        self.users = users
     
 
     def _load_json(self, file):
-        #print("load json")
+        # load data from json
         f = open(file)
         data = json.load(f)
         for row in data:
@@ -104,32 +132,36 @@ class UserDataProcessor:
         #print('validate emails')
         new_users = []
         for user in self.users:
-            at_count = user[2].count('@')
-            dot_count = user[2].count('.')
-            if at_count == 1 and dot_count == 1:
-                # Splitting email
-                email_parts = user[2].split('@')
-                username = email_parts[0]
-                domain_parts = email_parts[1].split('.')
-                domain = domain_parts[0]
-                topdomain = domain_parts[1]
-                if len(username) >= 1 and len(domain) >= 1 and 1 <= len(topdomain) <= 4:
-                    if topdomain.isalnum():
-                        new_users.append(user)
+            try:
+                if user[2]:
+                    at_count = user[2].count('@')
+                    dot_count = user[2].count('.')
+                    if at_count == 1 and dot_count == 1:
+                        email_parts = user[2].split('@')
+                        username = email_parts[0]
+                        domain_parts = email_parts[1].split('.')
+                        domain = domain_parts[0]
+                        topdomain = domain_parts[1]
+                        if len(username) >= 1 and len(domain) >= 1 and 1 <= len(topdomain) <= 4:
+                            if topdomain.isalnum():
+                                new_users.append(user)
+            except:
+                pass
         self.users = new_users
 
 
     def validate_telephone(self):
-        #print('validate telephone')
+        # validating telephone numbers
         new_users = []
         for user in self.users:
             try:
-                if user[1].isnumeric() and len(user[1]) == 9:
-                    new_users.append(user)
-                else:
-                    user[1] = user[1].replace(" ", "")
-                    user[1] = user[1][len(user[1]) - 9:]
-                    new_users.append(user)
+                if user[1]:
+                    if user[1].isnumeric() and len(user[1]) == 9:
+                        new_users.append(user)
+                    else:
+                        user[1] = user[1].replace(" ", "")
+                        user[1] = user[1][len(user[1]) - 9:]
+                        new_users.append(user)
             except:
                 pass  
         self.users = new_users
@@ -139,7 +171,7 @@ class UserDataProcessor:
         # This function removes duplicate numbers first.
         # If an account has a duplicated number AND email with another account 
         # then it will first select the newer user with the same number
-        #print('remove duplicates')
+        
         seen_numbers = {}
         unique_users = []
 
@@ -192,7 +224,7 @@ class UserDataProcessor:
                 if user[3] == password:
                     return user
                 else:
-                    return 'Your password is wrong'
+                    return 'Your password is wrong. Try with double quotes around your password'
         return 'Your login is wrong'
 
 
@@ -401,7 +433,13 @@ def main():
     data_processor = UserDataProcessor()
 
     # load data
-    data_processor.import_data({"./data/a/b/users_1.csv", "./data/a/b/users_1.xml", "./data/a/users.json"})
+    data_processor.import_data({
+        "./data/a/b/users_1.csv",
+        "./data/a/b/users_1.xml",
+        "./data/a/users.json",
+        "./data/a/c/users_2.csv",
+        "./users_database.db"
+    })
 
     # validate emails
     data_processor.validate_emails()

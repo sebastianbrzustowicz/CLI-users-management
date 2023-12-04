@@ -3,6 +3,7 @@ import json
 import csv
 import xml.etree.ElementTree as ET
 from datetime import datetime
+import sqlite3
 import os
 os.system('cls')
 
@@ -14,7 +15,7 @@ class UserDataProcessor:
 
     def import_data(self, files):
         # Load data from JSON, CSV, XML
-        print("load data")
+        #print("load data")
         for file in files:
             if file.endswith(".json"):
                 self._load_json(file)
@@ -28,7 +29,7 @@ class UserDataProcessor:
     
 
     def _load_json(self, file):
-        print("load json")
+        #print("load json")
         f = open(file)
         data = json.load(f)
         for row in data:
@@ -38,7 +39,16 @@ class UserDataProcessor:
             password = row.get("password")
             role = row.get("role")
             created_at = row.get("created_at")
-            children = row.get("children", [])
+            children_data = row.get("children", [])
+            children = []
+            for child in children_data:
+                try:
+                    if child:
+                        name = child['name']
+                        age = child['age']
+                        children.append([name, age])
+                except:
+                    pass
             self.users.append([firstname, telephone_number,
                                email, password, role, 
                                created_at, children])
@@ -47,16 +57,26 @@ class UserDataProcessor:
 
 
     def _load_csv(self, file):
-        print("load csv")
+        #print("load csv")
         with open(file, 'r') as data:
             csvreader = csv.reader(data, delimiter=';')
             header = next(csvreader)
             for row in csvreader:
-                self.users.append(list(row))
+                children_data = row[6].split(',')
+                children = []
+                for child in children_data:
+                    if child:
+                        child_data = child.split(' ')
+                        child_data[1] = int(child_data[1].replace('(', '').replace(')', ''))
+                        name = child_data[0]
+                        age = child_data[1]
+                        children.append([name, age])
+                row[6] = children
+                self.users.append(row)
 
 
     def _load_xml(self, file):
-        print("load xml")
+        #print("load xml")
         tree = ET.parse(file)
         root = tree.getroot()
         for users in root.findall('user'):
@@ -66,14 +86,22 @@ class UserDataProcessor:
             password  = users.find('password').text
             role = users.find('role').text
             created_at = users.find('created_at').text
-            children = users.find('children').text
+            children = []
+            for child in users.findall('./children/child'):
+                try:
+                    if child:
+                        name = child.find('name').text
+                        age = int(child.find('age').text)
+                        children.append([name, age])
+                except:
+                    pass            
             self.users.append([firstname, telephone_number,
                                email, password, role,
                                created_at, children])
 
 
     def validate_emails(self):
-        print('validate emails')
+        #print('validate emails')
         new_users = []
         for user in self.users:
             at_count = user[2].count('@')
@@ -92,7 +120,7 @@ class UserDataProcessor:
 
 
     def validate_telephone(self):
-        print('validate telephone')
+        #print('validate telephone')
         new_users = []
         for user in self.users:
             try:
@@ -111,7 +139,7 @@ class UserDataProcessor:
         # This function removes duplicate numbers first.
         # If an account has a duplicated number AND email with another account 
         # then it will first select the newer user with the same number
-        print('remove duplicates')
+        #print('remove duplicates')
         seen_numbers = {}
         unique_users = []
 
@@ -157,37 +185,207 @@ class UserDataProcessor:
         self.users = unique_users
 
 
+    def authenticate_user(self, login, password):
+        #print('authenticate user')
+        for user in self.users:
+            if user[1] == login or user[2] == login:
+                if user[3] == password:
+                    return user
+                else:
+                    return 'Your password is wrong'
+        return 'Your login is wrong'
+
+
     def print_all_accounts(self, login, password):
-        print('print all accounts')
-        #for user in self.users:
-        #    print(user)
-        print(len(self.users))
-        pass
+        #print('print all accounts')
+        auth_result = self.authenticate_user(login, password)
+        if isinstance(auth_result, list):
+            if auth_result[4] == 'admin':
+                print(len(self.users))
+            else:
+                print(f'You need admin permission, but your role is: {auth_result[4]}')
+        else:
+            print(auth_result)
 
 
-    def print_oldest_account(self):
-        print('print oldest account')
-        pass
+    def print_oldest_account(self, login, password):
+        #print('print oldest account')
+        auth_result = self.authenticate_user(login, password)
+        if isinstance(auth_result, list):
+            if auth_result[4] == 'admin':
+                oldest_user = [None, None, datetime.now()]
+                for user in self.users:
+                    timestamp = datetime.strptime(user[5], '%Y-%m-%d %H:%M:%S')
+                    if oldest_user[2] > timestamp:
+                        oldest_user = [user[0], user[2], timestamp]
+    
+                print('name: ' + oldest_user[0])
+                print('email_address: ' + oldest_user[1])
+                print('created_at: ' + str(oldest_user[2]))
+            else:
+                print(f'You need admin permission, but your role is: {auth_result[4]}')
+            
+        else:
+            print(auth_result)
 
 
-    def group_by_age(self):
-        print('group by age')
-        pass
+    def group_by_age(self, login, password):
+        #print('group by age')
+        auth_result = self.authenticate_user(login, password)
+        if isinstance(auth_result, list):
+            if auth_result[4] == 'admin':
+                age_counts = {}
+                for user in self.users:
+                    if user[6]:
+                        for child in user[6]:
+                            age = child[1]
+                            if age in age_counts:
+                                age_counts[age] += 1
+                            else:
+                                age_counts[age] = 1
+                
+                sorted_age_counts = dict(sorted(age_counts.items(), key=lambda item: item[1]))
+                for age, count in sorted_age_counts.items():
+                    print(f'age: {age}, count: {count}')
+            else:
+                print(f'You need admin permission, but your role is: {auth_result[4]}')
+            
+        else:
+            print(auth_result)
 
 
-    def print_children(self):
-        print('print children')
-        pass
+    def print_children(self, login, password):
+        #print('print children')
+        auth_result = self.authenticate_user(login, password)
+        if isinstance(auth_result, list):
+            for user in self.users:
+                if (user[1] == login or user[2] == login) and user[3] == password:
+                    try:
+                        if user[6]:
+                            for child in user[6]:
+                                print(f'{child[0]}, {child[1]}')
+                    except:
+                        pass
+        else:
+            print(auth_result)   
 
 
-    def find_similar_children_by_age(self):
-        print('find similar children by age')
-        pass
+    def find_similar_children_by_age(self, login, password):
+        #print('find similar children by age')
+        auth_result = self.authenticate_user(login, password)
+        if isinstance(auth_result, list):
+            children_age = []
+            # get age of children
+            for user in self.users:
+                if (user[1] == login or user[2] == login) and user[3] == password:
+                    try:
+                        if user[6]:
+                            for child in user[6]:
+                                children_age.append(child[1])
+                    except:
+                        pass
+
+            # find children with similar age
+            similar_children_data = []
+            for user in self.users:
+                try:
+                    if user[6]:
+                        for child in user[6]:
+                            for user_child in children_age:
+                                if user_child == child[1]:
+                                    similar_children_data.append(user)
+                except:
+                    pass
+
+            # removing same users
+            unique_users = []
+            for user in similar_children_data:
+                if user not in unique_users:
+                    unique_users.append(user)
+
+            # sort children alphabetically
+            for user in unique_users:
+                user[6].sort(key=lambda x: x[0], reverse=False)
+
+            # extract data to display
+            display_data = []
+            for user in unique_users:
+                base_string = f'{user[0]}, {user[1]}:'
+                for child in user[6]:
+                    base_string += f' {child[0]}, {child[1]};'
+                base_string = base_string[:-1]
+                display_data.append(base_string)
+
+            for row in display_data:
+                print(row)
+
+        else:
+            print(auth_result)
 
 
-    def create_database(self):
-        print('create database')
-        pass
+    def create_database(self, login, password):
+        #print('create database')
+        auth_result = self.authenticate_user(login, password)
+        if isinstance(auth_result, list):
+            if auth_result[4] == 'admin':
+                conn = sqlite3.connect('users_database.db')
+                cursor = conn.cursor()
+
+                cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS users (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        firstname TEXT,
+                        telephone_number TEXT,
+                        email TEXT,
+                        password TEXT,
+                        role TEXT,
+                        created_at TEXT
+                    )
+                ''')
+
+                cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS children (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        parent_email TEXT,
+                        name TEXT,
+                        age INTEGER,
+                        FOREIGN KEY (parent_email) REFERENCES users (email)
+                    )
+                ''')
+
+                users_data = []
+                for user in self.users:
+                    users_data.append(tuple(user[:6]))
+
+                cursor.execute('DELETE FROM users')
+                cursor.executemany('INSERT INTO users (firstname, telephone_number, email, password, role, created_at) VALUES (?, ?, ?, ?, ?, ?)', users_data)
+
+                last_user_id = cursor.lastrowid
+
+                children_data_array = []
+                for user in self.users:
+                    try:
+                        if user[6]:
+                            for child in user[6]:
+                                children_data_array.append([user[2], child[0], child[1]])
+                    except:
+                        pass
+                
+                children_data = []
+                for user in children_data_array:
+                    children_data.append(tuple(user[:3]))
+
+                cursor.execute('DELETE FROM children')
+                cursor.executemany('INSERT INTO children (parent_email, name, age) VALUES (?, ?, ?)', children_data)
+
+                conn.commit()
+                conn.close()
+
+                print('database created')
+            else:
+                print(f'You need admin permission, but your role is: {auth_result[4]}')
+        else:
+            print(auth_result)
 
 
 def main():
@@ -218,22 +416,17 @@ def main():
     if args.command == "print-all-accounts":
         data_processor.print_all_accounts(args.login, args.password)
     elif args.command == "print-oldest-account":
-        data_processor.print_oldest_account()
+        data_processor.print_oldest_account(args.login, args.password)
     elif args.command == "group-by-age":
-        data_processor.group_by_age()
+        data_processor.group_by_age(args.login, args.password)
     elif args.command == "print-children":
-        data_processor.print_children()
+        data_processor.print_children(args.login, args.password)
     elif args.command == "find-similar-children-by-age":
-        data_processor.find_similar_children_by_age()
+        data_processor.find_similar_children_by_age(args.login, args.password)
     elif args.command == "create_database":
-        data_processor.create_database()
+        data_processor.create_database(args.login, args.password)
     else:
         print("Invalid command")
-
-    # print sth
-    #print(data_processor.users)
-    #print(len(data_processor.users))
-    #print(args.command)
 
 if __name__ == "__main__":
     main()

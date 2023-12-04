@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 import sqlite3
 import os
-os.system('cls')
+os.system('cls' if os.name == 'nt' else 'clear')
 
 class UserDataProcessor:
     def __init__(self):

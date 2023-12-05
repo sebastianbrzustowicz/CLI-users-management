@@ -169,7 +169,7 @@ class TestUserDataProcessor(unittest.TestCase):
         self.data_processor.create_database('greenmadison@example.net', '&S1XUo94)k')
         printed_value = captured_output.getvalue().strip()
         sys.stdout = sys.__stdout__
-        output = "database created"
+        output = "Database created successfully."
         self.assertEqual(printed_value, output, "Creating database is wrong")
 
 if __name__ == '__main__':

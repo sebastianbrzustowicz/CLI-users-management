@@ -23,21 +23,21 @@ python tests/test.py
 Output:
 
 ```
-Data completeness test from json file
+Data completeness test from JSON file
 .
-Json data sample validation
+JSON data sample validation
 .
-Data completeness test from xml file
+Data completeness test from XML file
 .
-Xml data sample validation
+XML data sample validation
 .
-Data completeness test from csv file
+Data completeness test from CSV file
 .
-Csv data sample validation
+CSV data sample validation
 .
-Data completeness test from db file
+Data completeness test from DB file
 .
-Db data sample validation
+DB data sample validation
 .
 Importing multiple files
 .

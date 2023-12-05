@@ -455,7 +455,7 @@ class UserDataProcessor:
 def main():
     # CLI arguments
     parser = argparse.ArgumentParser(description='Manage user data')
-    parser.add_argument('command', help='Command')
+    parser.add_argument('command', help='Command (possible user commands: print-children, find-similar-children-by-age)')
     parser.add_argument('--login', required=True, help='User login (email or telephone number)')
     parser.add_argument('--password', required=True, help='User password')
     args = parser.parse_args()

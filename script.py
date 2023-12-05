@@ -245,12 +245,13 @@ class UserDataProcessor:
         # Parameters: login (str): telephone number or email, password (str).
         # Returns: None
         auth_result = self.authenticate_user(login, password)
+        _, _, _, _, role, _, _ = auth_result
         
         if isinstance(auth_result, list):
-            if auth_result[4] == 'admin':
+            if role == 'admin':
                 print(len(self.users))
             else:
-                print(f'You need admin permission, but your role is: {auth_result[4]}')
+                print(f'You need admin permission, but your role is: {role}')
         else:
             print(auth_result)
 
@@ -260,9 +261,10 @@ class UserDataProcessor:
         # Returns: oldest_user_data (list): Information about the oldest user [name, email_address, created_at] 
         # / None: If authentication fails.
         auth_result = self.authenticate_user(login, password)
+        _, _, _, _, role, _, _ = auth_result
 
         if isinstance(auth_result, list):
-            if auth_result[4] == 'admin':
+            if role == 'admin':
                 oldest_user = [None, None, datetime.now()]
 
                 for user in self.users:
@@ -274,7 +276,7 @@ class UserDataProcessor:
                 print('email_address: ' + oldest_user[1])
                 print('created_at: ' + str(oldest_user[2]))
             else:
-                print(f'You need admin permission, but your role is: {auth_result[4]}')
+                print(f'You need admin permission, but your role is: {role}')
         else:
             print(auth_result)
 
@@ -283,9 +285,10 @@ class UserDataProcessor:
         # Parameters: login (str): telephone number or email, password (str).
         # Returns: age_counts (dict): Dictionary with age counts / None: If authentication fails.
         auth_result = self.authenticate_user(login, password)
+        _, _, _, _, role, _, _ = auth_result
 
         if isinstance(auth_result, list):
-            if auth_result[4] == 'admin':
+            if role == 'admin':
                 age_counts = {}
 
                 for user in self.users:
@@ -303,7 +306,7 @@ class UserDataProcessor:
                 for age, count in sorted_age_counts.items():
                     print(f'age: {age}, count: {count}')
             else:
-                print(f'You need admin permission, but your role is: {auth_result[4]}')
+                print(f'You need admin permission, but your role is: {role}')
         else:
             print(auth_result)
 

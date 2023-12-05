@@ -11,6 +11,60 @@ The structure of the processed data is as follows:
 - `created_at` date in format YYYY-MM-DD HH:MM:SS
 - List of `children` with `(name, age)`
 
+### Unit tests are available
+Input:
+
+```python
+
+python tests/test.py
+
+```
+
+Output:
+
+```
+Data completeness test from json file
+.
+Json data sample validation
+.
+Data completeness test from xml file
+.
+Xml data sample validation
+.
+Data completeness test from csv file
+.
+Csv data sample validation
+.
+Data completeness test from db file
+.
+Db data sample validation
+.
+Importing multiple files
+.
+Emails validation
+.
+Telephone numbers validation
+.
+Remove duplicates
+.
+Print all account
+.
+Print oldest account
+.
+Group by age
+.
+Print children
+.
+Find similar children by age
+.
+Creating database
+.
+----------------------------------------------------------------------
+Ran 18 tests in 0.018s
+
+OK
+```
+
 ## CLI commands
 The structure of raw command: `python script.py <command> --login <login> --password <password>`
 
@@ -31,7 +85,7 @@ This section shows the use of each command.
 ## `print-all-accounts`
 This command shows how many users are in users data.
 
-### Input:
+Input:
 
 ```python
 
@@ -39,7 +93,7 @@ python script.py print-all-accounts --login "kimberlymartin@example.org" --passw
 
 ```
 
-### Output:
+Output:
 
 ```
 69
@@ -48,7 +102,7 @@ python script.py print-all-accounts --login "kimberlymartin@example.org" --passw
 ## `print-oldest-account`
 This command shows oldest existing account.
 
-### Input:
+Input:
 
 ```python
 
@@ -56,7 +110,7 @@ python script.py print-oldest-account --login "kimberlymartin@example.org" --pas
 
 ```
 
-### Output:
+Output:
 
 ```
 name: Justin
@@ -67,7 +121,7 @@ created_at: 2022-11-25 02:19:37
 ## `group-by-age`
 This command displays the number of all children grouped by age, sorted in ascending order of quantity.
 
-### Input:
+Input:
 
 ```python
 
@@ -75,7 +129,7 @@ python script.py group-by-age --login "kimberlymartin@example.org" --password "n
 
 ```
 
-### Output:
+Output:
 
 ```
 age: 13, count: 3
@@ -101,7 +155,7 @@ age: 1, count: 9
 ## `print-children`
 This command shows user's children data.
 
-### Input:
+Input:
 
 ```python
 
@@ -109,7 +163,7 @@ python script.py print-children --login "kimberlymartin@example.org" --password 
 
 ```
 
-### Output:
+Output:
 
 ```
 Justin, 15
@@ -119,7 +173,7 @@ Sarah, 10
 ## `find-similar-children-by-age`
 This command shows children with similar age (and their parent) as user's children.
 
-### Input:
+Input:
 
 ```python
 
@@ -127,7 +181,7 @@ python script.py find-similar-children-by-age --login "kimberlymartin@example.or
 
 ```
 
-### Output:
+Output:
 
 ```
 Sean, 650232530: Dan, 10
@@ -143,7 +197,7 @@ Jamie, 608442660: Jesse, 7; Jonathan, 13; Victor, 10
 ## `create_database`
 This command allows the administrator to create a database via SQLite with all the collected data. Script allows to read files with .db extension.
 
-### Input:
+Input:
 
 ```python
 
@@ -151,7 +205,7 @@ python script.py create_database --login "kimberlymartin@example.org" --password
 
 ```
 
-### Output:
+Output:
 
 ```
 database created

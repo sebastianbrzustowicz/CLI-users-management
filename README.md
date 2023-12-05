@@ -47,6 +47,12 @@ Telephone numbers validation
 .
 Remove duplicates
 .
+Authentication - successful
+.
+Authentication - wrong login
+.
+Authentication - wrong password
+.
 Print all account
 .
 Print oldest account
@@ -60,7 +66,7 @@ Find similar children by age
 Creating database
 .
 ----------------------------------------------------------------------
-Ran 18 tests in 0.018s
+Ran 21 tests in 0.034s
 
 OK
 ```

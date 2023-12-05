@@ -89,7 +89,28 @@ class TestUserDataProcessor(unittest.TestCase):
         self.data_processor.remove_duplicates()
         self.assertEqual(len(self.data_processor.users), 15, 'Duplicates are removed wrongly')
 
-    def test_12_print_all_accounts(self):
+    def test_12_user_authentication(self):
+        print('\nAuthentication - successful')
+        self.data_processor.import_data({'../data/a/c/users_2.csv'})
+        output = self.data_processor.authenticate_user('ashleyhall@example.net', '#0R0UT&yw2')
+        expected = ['Cassandra', '088691177', 'ashleyhall@example.net', '#0R0UT&yw2', 'admin', '2023-01-14 22:11:14', [['Joshua', 1], ['Brittany', 14]]]
+        self.assertEqual(output, expected, 'Account authentication unexpectedly failed')
+
+    def test_13_user_authentication(self):
+        print('\nAuthentication - wrong login')
+        self.data_processor.import_data({'../data/a/c/users_2.csv'})
+        output = self.data_processor.authenticate_user('12345678@example.net', '#0R0UT&yw2')
+        expected = 'Your login is wrong'
+        self.assertEqual(output, expected, 'Expected wrong login message')
+
+    def test_14_user_authentication(self):
+        print('\nAuthentication - wrong password')
+        self.data_processor.import_data({'../data/a/c/users_2.csv'})
+        output = self.data_processor.authenticate_user('ashleyhall@example.net', '12345678')
+        expected = 'Your password is wrong. Try with double quotes around your password'
+        self.assertEqual(output, expected, 'Expected wrong password message')
+
+    def test_15_print_all_accounts(self):
         print('\nPrint all account')
         self.data_processor.import_data({'../data/a/c/users_2.csv'})
         self.data_processor.validate_emails()
@@ -102,7 +123,7 @@ class TestUserDataProcessor(unittest.TestCase):
         sys.stdout = sys.__stdout__
         self.assertEqual(printed_value, '14', 'Printing accounts is wrong')
 
-    def test_13_print_oldest_account(self):
+    def test_16_print_oldest_account(self):
         print('\nPrint oldest account')
         self.data_processor.import_data({'../data/a/c/users_2.csv'})
         self.data_processor.validate_emails()
@@ -116,7 +137,7 @@ class TestUserDataProcessor(unittest.TestCase):
         output = 'name: Madeline\nemail_address: matthewdecker2@example.com\ncreated_at: 2022-12-05 04:34:20'
         self.assertEqual(printed_value, output, 'Printing oldest account is wrong')
 
-    def test_14_group_by_age(self):
+    def test_17_group_by_age(self):
         print('\nGroup by age')
         self.data_processor.import_data({'../data/a/c/users_2.csv'})
         self.data_processor.validate_emails()
@@ -130,7 +151,7 @@ class TestUserDataProcessor(unittest.TestCase):
         output = 'age: 12, count: 1\nage: 5, count: 1\nage: 7, count: 1\nage: 15, count: 1\nage: 2, count: 1'
         self.assertEqual(printed_value[0:86], output, 'Grouping by age is wrong')
 
-    def test_15_print_children(self):
+    def test_18_print_children(self):
         print('\nPrint children')
         self.data_processor.import_data({'../data/a/c/users_2.csv'})
         self.data_processor.validate_emails()
@@ -144,7 +165,7 @@ class TestUserDataProcessor(unittest.TestCase):
         output = 'Kristin, 14'
         self.assertEqual(printed_value, output, 'Printing children is wrong')
 
-    def test_16_find_similar_children_by_age(self):
+    def test_19_find_similar_children_by_age(self):
         print('\nFind similar children by age')
         self.data_processor.import_data({'../data/a/c/users_2.csv'})
         self.data_processor.validate_emails()
@@ -158,7 +179,7 @@ class TestUserDataProcessor(unittest.TestCase):
         output = 'Kevin, 227397825: Kristin, 14\nCassandra, 088691177: Brittany, 14; Joshua, 1'
         self.assertEqual(printed_value, output, 'Finding similar children by age is wrong')
 
-    def test_17_create_database(self):
+    def test_20_create_database(self):
         print('\nCreating database')
         self.data_processor.import_data({'../data/a/c/users_2.csv'})
         self.data_processor.validate_emails()

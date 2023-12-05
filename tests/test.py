@@ -18,45 +18,45 @@ class TestUserDataProcessor(unittest.TestCase):
         }
 
     def test_00_load_data_from_json(self):
-        print('\nData completeness test from json file')
+        print('\nData completeness test from JSON file')
         self.data_processor._load_json('../data/a/users.json')
         self.assertEqual(len(self.data_processor.users), 31, 'Users not loaded from json file')
 
     def test_01_json_data(self):
-        print('\nJson data sample validation')
+        print('\nJSON data sample validation')
         self.data_processor._load_json('../data/a/users.json')
         output = ['Michael', '(48)667574950', 'kimberlymartin@example.org', 'ns6REVen+g', 'admin', '2023-11-19 20:42:33', [['Justin', 15], ['Sarah', 10]]]
         self.assertEqual(self.data_processor.users[7], output, 'Loaded json data is not appropriate')
 
     def test_02_load_data_from_xml(self):
-        print('\nData completeness test from xml file')
+        print('\nData completeness test from XML file')
         self.data_processor._load_xml('../data/a/b/users_1.xml')
         self.assertEqual(len(self.data_processor.users), 15, 'Users not loaded from xml file')
 
     def test_03_xml_data(self):
-        print('\nXml data sample validation')
+        print('\nXML data sample validation')
         self.data_processor._load_xml('../data/a/b/users_1.xml')
         output = ['Brandy', '00686983157', 'andrew36@example.net', '(UVIl#9&q7', 'admin', '2022-12-04 08:30:37', [['Teresa', 4]]]
         self.assertEqual(self.data_processor.users[0], output, 'Loaded xml data is not appropriate')
 
     def test_04_load_data_from_csv(self):
-        print('\nData completeness test from csv file')
+        print('\nData completeness test from CSV file')
         self.data_processor._load_csv('../data/a/c/users_2.csv')
         self.assertEqual(len(self.data_processor.users), 20, 'Users not loaded from csv file')
 
     def test_05_csv_data(self):
-        print('\nCsv data sample validation')
+        print('\nCSV data sample validation')
         self.data_processor._load_csv('../data/a/c/users_2.csv')
         output = ['Don', '612660796', 'tamara37@example.com', 'jQ66IIlR*1', 'user', '2023-08-23 23:27:09', [['Michael', 12], ['Theresa', 6], ['Judith', 1]]]
         self.assertEqual(self.data_processor.users[0], output, 'Loaded csv data is not appropriate')
 
     def test_06_load_data_from_db(self):
-        print('\nData completeness test from db file')
+        print('\nData completeness test from DB file')
         self.data_processor._load_db('../users_database.db')
         self.assertEqual(len(self.data_processor.users), 69, 'Users not loaded from db file')
 
     def test_07_db_data(self):
-        print('\nDb data sample validation')
+        print('\nDB data sample validation')
         self.data_processor._load_db('../users_database.db')
         output = ['Tanner', '604020303', 'lowerykimberly@example.net', '6mKY!nP^+y', 'admin', '2023-08-27 23:36:00', [['Anna', 18], ['Mindy', 11]]]
         self.assertEqual(self.data_processor.users[0], output, 'Loaded db data is not appropriate')

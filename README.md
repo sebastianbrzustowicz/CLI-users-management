@@ -208,5 +208,5 @@ python script.py create_database --login "kimberlymartin@example.org" --password
 Output:
 
 ```
-database created
+Database created successfully.
 ```

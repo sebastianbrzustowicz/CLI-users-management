@@ -17,7 +17,8 @@ Input:
 
 ```python
 
-python tests/test.py
+cd tests
+python test.py
 
 ```
 

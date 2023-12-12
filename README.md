@@ -3,6 +3,7 @@
 Author: Sebastian Brzustowicz  
 The script uses only the Python Standard Library.  
 This script is helpful with managing data with different types of files. (.json, .csv, .xml, .db)  
+All data files should be stored in `data` folder.   
 The structure of the processed data is as follows:
 - `firstname`
 - `telephone_number`
@@ -104,7 +105,7 @@ python script.py print-all-accounts --login "kimberlymartin@example.org" --passw
 Output:
 
 ```
-69
+84
 ```
 
 ## `print-oldest-account`
@@ -140,24 +141,24 @@ python script.py group-by-age --login "kimberlymartin@example.org" --password "n
 Output:
 
 ```
-age: 13, count: 3
-age: 5, count: 3
-age: 3, count: 3
-age: 18, count: 4
+age: 5, count: 4
 age: 10, count: 4
 age: 14, count: 4
-age: 16, count: 5
-age: 7, count: 5
-age: 6, count: 5
+age: 18, count: 5
 age: 15, count: 5
 age: 9, count: 5
-age: 4, count: 6
-age: 11, count: 7
-age: 2, count: 8
-age: 8, count: 8
-age: 12, count: 8
-age: 17, count: 9
-age: 1, count: 9
+age: 6, count: 5
+age: 7, count: 5
+age: 16, count: 5
+age: 3, count: 7
+age: 13, count: 7
+age: 4, count: 7
+age: 8, count: 9
+age: 12, count: 9
+age: 11, count: 10
+age: 17, count: 10
+age: 2, count: 10
+age: 1, count: 10
 ```
 
 ## `print-children`
@@ -192,14 +193,14 @@ python script.py find-similar-children-by-age --login "kimberlymartin@example.or
 Output:
 
 ```
+Michael, 667574950: Justin, 15; Sarah, 10
+Jamie, 608442660: Jesse, 7; Jonathan, 13; Victor, 10
 Sean, 650232530: Dan, 10
 Felicia, 394426853: Jennifer, 2; Omar, 10
 Donna, 893849179: Kimberly, 2; Mark, 15; Paul, 1
 Amanda, 698312978: Brenda, 1; Christopher, 15; Lisa, 8
 Jeffrey, 854869516: Brian, 13; John, 15
 Eric, 110355347: Evan, 2; Mary, 1; Mary, 15
-Michael, 667574950: Justin, 15; Sarah, 10
-Jamie, 608442660: Jesse, 7; Jonathan, 13; Victor, 10
 ```
 
 ## `create_database`

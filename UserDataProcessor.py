@@ -1,3 +1,4 @@
+import os
 import json
 import csv
 import xml.etree.ElementTree as ET
@@ -7,6 +8,22 @@ import sqlite3
 class UserDataProcessor:
     def __init__(self):
         self.users = []
+
+    def find_files(self, directory):
+        # Find files in `path` folder and subfolders JSON, CSV, XML
+        # Parameters: directory (string): The path to the root files folder.
+        # Returns: files (list): The paths to all files in `path` folder.
+        files_list = []
+        for root, dirs, files in os.walk(directory):
+            for file in files:
+                if file.endswith(".json") or file.endswith(".csv") or file.endswith(".xml") or file.endswith(".db"):
+                    files_list.append(os.path.join(root, file))
+ 
+        if files_list:
+            return files_list
+        else:
+            print("No such files in specified folder.")
+        
 
     def import_data(self, files):
         # Load data from JSON, CSV, XML
@@ -30,8 +47,10 @@ class UserDataProcessor:
 
         cursor = conn.cursor()
 
-        res = cursor.execute("""SELECT firstname, telephone_number, email, 
-                                password, role, created_at FROM users""")
+        user_query = """SELECT firstname, telephone_number, email, 
+                        password, role, created_at FROM users"""
+
+        res = cursor.execute(user_query)
         data = res.fetchall()
 
         users = []
@@ -41,7 +60,8 @@ class UserDataProcessor:
             users.append(row)
 
         # Load children data and associate with users
-        res = cursor.execute('SELECT parent_email, name, age FROM children')
+        children_query = 'SELECT parent_email, name, age FROM children'
+        res = cursor.execute(children_query)
         data = res.fetchall()
 
         for row in data:
@@ -394,7 +414,8 @@ class UserDataProcessor:
                 conn = sqlite3.connect('users_database.db')
                 cursor = conn.cursor()
 
-                cursor.execute('''
+                # Create users table
+                create_users_table_query = '''
                     CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         firstname TEXT,
@@ -404,9 +425,11 @@ class UserDataProcessor:
                         role TEXT,
                         created_at TEXT
                     )
-                ''')
+                '''
+                cursor.execute(create_users_table_query)
 
-                cursor.execute('''
+                 # Create children table
+                create_children_table_query = '''
                     CREATE TABLE IF NOT EXISTS children (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         parent_email TEXT,
@@ -414,14 +437,20 @@ class UserDataProcessor:
                         age INTEGER,
                         FOREIGN KEY (parent_email) REFERENCES users (email)
                     )
-                ''')
+                '''
+                cursor.execute(create_children_table_query)
 
                 users_data = []
                 for user in self.users:
                     users_data.append(tuple(user[:6]))
 
-                cursor.execute('DELETE FROM users')
-                cursor.executemany('INSERT INTO users (firstname, telephone_number, email, password, role, created_at) VALUES (?, ?, ?, ?, ?, ?)', users_data)
+                # Delete users
+                delete_users_query = 'DELETE FROM users'
+                cursor.execute(delete_users_query)
+
+                # Insert users
+                insert_users_query = 'INSERT INTO users (firstname, telephone_number, email, password, role, created_at) VALUES (?, ?, ?, ?, ?, ?)'
+                cursor.executemany(insert_users_query, users_data)
 
                 children_data_array = []
                 for user in self.users:
@@ -434,8 +463,13 @@ class UserDataProcessor:
                 
                 children_data = [tuple(user[:3]) for user in children_data_array]
 
-                cursor.execute('DELETE FROM children')
-                cursor.executemany('INSERT INTO children (parent_email, name, age) VALUES (?, ?, ?)', children_data)
+                # Delete children
+                delete_children_query = 'DELETE FROM children'
+                cursor.execute(delete_children_query)
+
+                # Insert children
+                insert_children_query = 'INSERT INTO children (parent_email, name, age) VALUES (?, ?, ?)'
+                cursor.executemany(insert_children_query, children_data)
 
                 conn.commit()
                 conn.close()

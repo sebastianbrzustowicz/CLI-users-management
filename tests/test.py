@@ -53,12 +53,12 @@ class TestUserDataProcessor(unittest.TestCase):
     def test_06_load_data_from_db(self):
         print('\nData completeness test from DB file')
         self.data_processor._load_db('../users_database.db')
-        self.assertEqual(len(self.data_processor.users), 69, 'Users not loaded from db file')
+        self.assertEqual(len(self.data_processor.users), 84, 'Users not loaded from db file')
 
     def test_07_db_data(self):
         print('\nDB data sample validation')
         self.data_processor._load_db('../users_database.db')
-        output = ['Tanner', '604020303', 'lowerykimberly@example.net', '6mKY!nP^+y', 'admin', '2023-08-27 23:36:00', [['Anna', 18], ['Mindy', 11]]]
+        output = ['Russell', '817730653', 'jwilliams@example.com', '4^8(Oj52C+', 'admin', '2023-05-15 21:57:02', [['Rebecca', 11], ['Christie', 17]]]
         self.assertEqual(self.data_processor.users[0], output, 'Loaded db data is not appropriate')
 
     def test_08_import_data(self):

@@ -16,14 +16,11 @@ def main():
     data_processor = UserDataProcessor()
 
     try:
-        # Load data
-        data_processor.import_data({
-            './data/a/b/users_1.csv',
-            './data/a/b/users_1.xml',
-            './data/a/users.json',
-            './data/a/c/users_2.csv',
-            './users_database.db'
-        })
+        # Find all files in `data` folder
+        files_list = data_processor.find_files("data")
+
+        # Load data        
+        data_processor.import_data(files_list)
     
         # Validate emails
         data_processor.validate_emails()
@@ -51,6 +48,8 @@ def main():
             print('Invalid command')
     except Exception as e:
         print(f'Error: {e}')
+
+    del data_processor
 
 if __name__ == '__main__':
     main()

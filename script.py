@@ -4,6 +4,21 @@ import os
 
 os.system('cls' if os.name == 'nt' else 'clear')
 
+def find_files(directory):
+    # Find files in `path` folder and subfolders JSON, CSV, XML
+    # Parameters: directory (string): The path to the root files folder.
+    # Returns: files (list): The paths to all files in `path` folder.
+    files_list = []
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".json") or file.endswith(".csv") or file.endswith(".xml") or file.endswith(".db"):
+                files_list.append(os.path.join(root, file))
+
+    if files_list:
+        return files_list
+    else:
+        print("No such files in specified folder.")
+
 def main():
     # CLI arguments
     parser = argparse.ArgumentParser(description='Manage user data')
@@ -16,8 +31,8 @@ def main():
     data_processor = UserDataProcessor()
 
     try:
-        # Find all files in `data` folder
-        files_list = data_processor.find_files("data")
+        # Find all JSON, CSV, XML, DB files in `data` folder
+        files_list = find_files('data')
 
         # Load data        
         data_processor.import_data(files_list)
